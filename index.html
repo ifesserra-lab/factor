@@ -72,6 +72,7 @@ body {
 .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
 
 header.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 6px; }
+.eyebrow { font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-bottom: 4px; }
 h1 {
   font-family: "Bricolage Grotesque", "Archivo", system-ui, sans-serif;
   font-weight: 700; font-size: 30px; letter-spacing: -0.01em;
@@ -94,7 +95,8 @@ h1 {
 /* ---- filter row ---- */
 .filters {
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-  padding: 12px 0 18px; border-bottom: 1px solid var(--hairline); margin-bottom: 24px;
+  padding: 12px 0 14px; border-bottom: 1px solid var(--hairline); margin-bottom: 24px;
+  position: sticky; top: 0; z-index: 30; background: var(--bg);
 }
 .filters input[type="search"], .filters select {
   font: inherit; font-size: 14px; color: var(--ink);
@@ -160,10 +162,37 @@ button.clear:hover { color: var(--ink); border-color: var(--ink-3); }
 .list-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; }
 .list-head h2 { font-size: 16px; font-weight: 600; margin: 0; }
 .list-head select { font: inherit; font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px; padding: 5px 8px; margin-left: auto; }
+details.export { position: relative; }
+details.export summary {
+  list-style: none; cursor: pointer; font-size: 13px; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px;
+  padding: 5px 10px; white-space: nowrap;
+}
+details.export summary::-webkit-details-marker { display: none; }
+details.export summary:hover { color: var(--ink); border-color: var(--ink-3); }
+details.export[open] summary { color: var(--ink); }
+.export-menu {
+  position: absolute; right: 0; top: calc(100% + 4px); z-index: 40;
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+  padding: 6px; min-width: 240px; display: flex; flex-direction: column;
+}
+.export-menu button {
+  font: inherit; font-size: 13px; text-align: left; color: var(--ink);
+  background: none; border: none; border-radius: 5px; padding: 7px 9px; cursor: pointer;
+}
+.export-menu button:hover { background: var(--chip-bg); }
+.export-menu .hint { font-size: 11.5px; color: var(--ink-3); padding: 4px 9px 6px; border-top: 1px solid var(--hairline); margin-top: 4px; }
 .row {
   background: var(--surface); border: 1px solid var(--ring); border-radius: 8px;
   margin-bottom: 8px; cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
+.row:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+.row:hover .row-title .plink { text-decoration: underline; }
 .row-main { display: grid; grid-template-columns: 1fr auto; gap: 4px 18px; padding: 13px 16px; }
 .row-title { grid-column: 1; grid-row: 1; font-weight: 600; font-size: 14.5px; line-height: 1.35; }
 .row-title .pid { color: var(--ink-3); font-weight: 500; margin-right: 6px; font-variant-numeric: tabular-nums; }
@@ -241,7 +270,10 @@ mark { background: var(--bar-soft); color: inherit; border-radius: 2px; padding:
 <div class="wrap">
 <div id="pageHome">
   <header class="top">
-    <h1>Projetos FACTO</h1>
+    <div>
+      <div class="eyebrow">Portal da Transparência · FACTO</div>
+      <h1>Projetos FACTO</h1>
+    </div>
   </header>
   <p class="subtitle">
     Projetos da Fundação de Apoio ao Desenvolvimento da Ciência e Tecnologia (FACTO), extraídos do
@@ -279,6 +311,10 @@ mark { background: var(--bar-soft); color: inherit; border-radius: 2px; padding:
         <option value="inicio">Início mais recente</option>
         <option value="nome">Ordem alfabética</option>
       </select>
+      <details class="export" id="exportMenu">
+        <summary>⬇ Exportar CSV</summary>
+        <div class="export-menu" id="exportOptions"></div>
+      </details>
     </div>
     <div id="rows"></div>
   </section>
@@ -674,6 +710,14 @@ function update() {
 
 let debounce;
 els.q.addEventListener("input", () => { clearTimeout(debounce); debounce = setTimeout(update, 120); });
+document.addEventListener("keydown", ev => {
+  if (ev.key === "/" && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) {
+    ev.preventDefault();
+    if (document.body.classList.contains("route-projeto")) location.hash = "#/";
+    els.q.focus();
+  }
+});
+els.q.title = "Atalho: tecle / em qualquer lugar para buscar";
 [els.tipo, els.cat, els.instr, els.sit, els.sort].forEach(el => el.addEventListener("change", update));
 document.getElementById("clear").addEventListener("click", () => {
   els.q.value = ""; els.tipo.value = ""; els.cat.value = ""; els.instr.value = ""; els.sit.value = "";
@@ -681,6 +725,95 @@ document.getElementById("clear").addEventListener("click", () => {
 });
 
 update();
+
+/* ---------- CSV export ---------- */
+const SCALAR_FIELDS = [
+  "Referência do projeto", "Coordenador", "Financiadora",
+  "Data de início", "Data de vigência", "Data de encerramento",
+  "Tipo de Projeto", "Categoria de Projeto", "Instrumento Jurídico",
+  "Emenda Parlamentar", "Instituição executora", "Departamento",
+  "Processo e sub-processo", "Valor aprovado", "Objetivo / Objeto / Título"
+];
+function csvEscape(v) {
+  v = String(v == null ? "" : v);
+  return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+function toCsv(header, rows) {
+  return "﻿" + [header].concat(rows).map(r => r.map(csvEscape).join(";")).join("\r\n");
+}
+async function downloadCsv(name, text) {
+  // Inside the claude.ai artifact viewer, plain blob downloads are inert;
+  // the mediated `downloads` capability is the only save path there.
+  const dls = window.claude ? await claude.use("downloads") : null;
+  if (dls) {
+    try {
+      await dls.save({ filename: name, data: text });
+    } catch (e) {
+      if (e && e.code === "extension_not_enabled") {
+        try { await dls.save({ filename: name + ".txt", data: text }); } catch (_) { /* declined */ }
+      }
+      // declined / rate_limited: viewer's choice; nothing to do
+    }
+    return;
+  }
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+function exportProjetos(list) {
+  const rows = list.map(p =>
+    [p.id].concat(SCALAR_FIELDS.map(k => cleanCell(p.d[k]))).concat([p.d._scraped_at || ""]));
+  downloadCsv("projetos.csv", toCsv(["id"].concat(SCALAR_FIELDS, ["_scraped_at"]), rows));
+}
+function exportTable(field, fname, list) {
+  let header = null;
+  const rows = [];
+  list.forEach(p => {
+    const raw = p.d[field] || "";
+    const lines = raw.split("\n").filter(l => l.trim() !== "");
+    if (lines.length < 3) return;
+    const cols = lines[1].split("\t").map(cleanCell);
+    if (!header) header = cols;
+    let group = "";
+    lines.slice(2).forEach(l => {
+      const cells = l.split("\t").map(cleanCell);
+      if (cells.length === 1 && cols.length > 1) { group = cells[0]; return; }
+      if (cells[0] && cells[0].replace(/:$/, "").toLowerCase() === "total") return;
+      while (cells.length < cols.length) cells.push("");
+      rows.push([p.id, group].concat(cells.slice(0, cols.length)));
+    });
+  });
+  if (!header) { alert("Sem dados de “" + field + "” no recorte atual."); return; }
+  downloadCsv(fname, toCsv(["projeto_id", "grupo"].concat(header), rows));
+}
+const EXPORTS = [
+  ["Projetos (recorte atual)", () => exportProjetos(filtered())],
+  ["Recursos por rubrica", () => exportTable("Recursos por rubrica", "recursos_rubrica.csv", filtered())],
+  ["Pagamentos pessoa jurídica", () => exportTable("Pagamento pessoa jurídica", "pagamentos_pj.csv", filtered())],
+  ["Pagamentos pessoa física", () => exportTable("Pagamento pessoa física", "pagamentos_pf.csv", filtered())],
+  ["Equipe", () => exportTable("Equipe", "equipe.csv", filtered())],
+  ["Plano de trabalho", () => exportTable("Plano de trabalho", "plano_trabalho.csv", filtered())],
+  ["Documentos", () => exportTable("Documentos", "documentos.csv", filtered())]
+];
+const exportMenu = document.getElementById("exportMenu");
+const exportOptions = document.getElementById("exportOptions");
+EXPORTS.forEach(([label, fn]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = label;
+  b.addEventListener("click", () => { fn(); exportMenu.open = false; });
+  exportOptions.append(b);
+});
+const hint = document.createElement("div"); hint.className = "hint";
+hint.textContent = "Exporta apenas os projetos do recorte atual (busca e filtros aplicados). CSV separado por “;”, compatível com Excel.";
+exportOptions.append(hint);
+document.addEventListener("click", ev => {
+  if (exportMenu.open && !exportMenu.contains(ev.target)) exportMenu.open = false;
+});
 
 /* ---------- project page & router ---------- */
 function ppChip(text, vigente) {
@@ -783,10 +916,14 @@ function renderProjectPage(id) {
 function route() {
   const m = /^#\/projeto\/(.+)$/.exec(location.hash);
   if (m) {
+    const id = decodeURIComponent(m[1]);
     document.body.classList.add("route-projeto");
-    renderProjectPage(decodeURIComponent(m[1]));
+    renderProjectPage(id);
+    const p = projects.find(x => x.id === id);
+    document.title = p ? "Projeto " + p.id + " · " + p.title.slice(0, 60) : "Projetos FACTO";
   } else {
     document.body.classList.remove("route-projeto");
+    document.title = "Projetos FACTO";
   }
   window.scrollTo(0, 0);
 }
