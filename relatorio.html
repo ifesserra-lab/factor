@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relatório Temático FACTO</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:wght@600;700&display=swap">
+<style>
+:root {
+  --bg: #f7f7f4;
+  --surface: #fdfdfb;
+  --ink: #14140f;
+  --ink-2: #54534d;
+  --ink-3: #8a887f;
+  --hairline: #e3e2da;
+  --ring: rgba(20,20,15,0.10);
+  --accent: #2a78d6;
+  --accent-ink: #1c5cab;
+  --chip-bg: #efeee9;
+  --good: #006300;
+  --good-chip-bg: rgba(12,163,12,0.10);
+  --note-bg: #f0efe9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131311;
+    --surface: #1c1c1a;
+    --ink: #f4f3ee;
+    --ink-2: #c3c2b7;
+    --ink-3: #898781;
+    --hairline: #2c2c2a;
+    --ring: rgba(255,255,255,0.10);
+    --accent: #3987e5;
+    --accent-ink: #6da7ec;
+    --chip-bg: #262623;
+    --good: #0ca30c;
+    --good-chip-bg: rgba(12,163,12,0.16);
+    --note-bg: #21211e;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131311;
+  --surface: #1c1c1a;
+  --ink: #f4f3ee;
+  --ink-2: #c3c2b7;
+  --ink-3: #898781;
+  --hairline: #2c2c2a;
+  --ring: rgba(255,255,255,0.10);
+  --accent: #3987e5;
+  --accent-ink: #6da7ec;
+  --chip-bg: #262623;
+  --good: #0ca30c;
+  --good-chip-bg: rgba(12,163,12,0.16);
+  --note-bg: #21211e;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.wrap { max-width: 1020px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.eyebrow { font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-bottom: 6px; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px 24px; margin-bottom: 8px; }
+h1 {
+  font-family: "Bricolage Grotesque", "Archivo", system-ui, sans-serif;
+  font-weight: 700; font-size: 29px; letter-spacing: -0.01em; line-height: 1.2;
+  margin: 0; text-wrap: balance; flex: 1 1 420px;
+}
+button.export {
+  font: inherit; font-size: 14px; font-weight: 600; color: #fff;
+  background: var(--accent); border: none; border-radius: 7px;
+  padding: 10px 16px; cursor: pointer; white-space: nowrap; margin-top: 4px;
+}
+button.export:hover { background: var(--accent-ink); }
+button.export:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.lede { color: var(--ink-2); font-size: 14.5px; max-width: 72ch; margin: 10px 0 6px; }
+.lede a { color: var(--accent-ink); text-decoration: none; }
+.lede a:hover { text-decoration: underline; }
+.meta { font-size: 12.5px; color: var(--ink-3); margin-bottom: 34px; }
+.meta a { color: var(--accent-ink); text-decoration: none; }
+.meta a:hover { text-decoration: underline; }
+
+section { margin-bottom: 40px; }
+h2 {
+  font-size: 19px; font-weight: 700; margin: 0 0 4px;
+  font-family: "Bricolage Grotesque", "Archivo", system-ui, sans-serif;
+}
+.sec-sum { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; max-width: 76ch; }
+
+.tbl-scroll { overflow-x: auto; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 760px; }
+th {
+  text-align: left; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; padding: 10px 14px; border-bottom: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+td { padding: 11px 14px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+td.valor { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; font-weight: 600; }
+th.valor { text-align: right; }
+td.proj a { color: inherit; font-weight: 600; text-decoration: none; }
+td.proj a:hover { color: var(--accent-ink); text-decoration: underline; }
+td.proj .pid { color: var(--ink-3); font-weight: 500; margin-right: 6px; font-variant-numeric: tabular-nums; }
+td.why { color: var(--ink-2); }
+.chip {
+  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+  padding: 2px 9px; border-radius: 99px; background: var(--chip-bg); color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip.direto { background: var(--good-chip-bg); color: var(--good); }
+.note {
+  background: var(--note-bg); border-left: 3px solid var(--hairline); border-radius: 0 6px 6px 0;
+  padding: 10px 14px; font-size: 13.5px; color: var(--ink-2); margin-top: 14px; max-width: 78ch;
+}
+.metodo { font-size: 13.5px; color: var(--ink-2); max-width: 78ch; }
+.metodo ol { padding-left: 20px; margin: 8px 0; }
+.metodo li { margin-bottom: 4px; }
+footer { border-top: 1px solid var(--hairline); padding-top: 14px; font-size: 12.5px; color: var(--ink-3); }
+footer a { color: var(--accent-ink); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Portal da Transparência · FACTO · 115 projetos analisados</div>
+  <div class="head">
+    <h1>Relatório Temático FACTO</h1>
+    <button class="export" id="btnExport" type="button">⬇ Exportar CSV</button>
+  </div>
+  <p class="lede">
+    Levantamento dos projetos da FACTO em oito recortes temáticos — de reflorestamento e água a
+    agroecologia, território do Rio Doce, biodiversidade e ecossistemas costeiros — a partir dos dados do
+    <a href="https://facto.conveniar.com.br/portaltransparencia/" rel="noopener">Portal da Transparência</a>.
+    Cada ocorrência de palavra-chave teve o contexto validado manualmente; falsos positivos foram descartados.
+  </p>
+  <p class="meta">Dados extraídos em 20/08/2026 · Classificação de 20/08/2026 · Dashboard completo: <a href="https://ifesserra-lab.github.io/factor/" rel="noopener">ifesserra-lab.github.io/factor</a> · Clique em um projeto para abrir sua página.</p>
+
+  <div id="sections"></div>
+
+  <section>
+    <h2>Método</h2>
+    <div class="metodo">
+      <ol>
+        <li>Fonte: <code>projetos.json</code> — scraper <code>factor_lib</code>, 115/115 projetos, zero erros.</li>
+        <li>Normalização de acentos e caixa; busca em título, objetivo e plano de trabalho por grupos de
+        termos com variações por categoria (reflorest/restauração/agroflorest/SAF; água/hídric/saneamento;
+        atingid/desastre/rio doce/renova/samarco/reparação; agroecolog/ATER/agricultura familiar/reforma
+        agrária/PNRA/PLANAB; biodiversidade/gestão ambiental/ICMBio/fauna; costeir/marinho/pesca/oceânic/litoral).</li>
+        <li>Inspeção do contexto de cada ocorrência para descartar falsos positivos antes da classificação
+        (ex.: "reforma agrária" apenas no nome do financiador, "assistência técnica" de patrimônio,
+        "restauração" como justiça restaurativa ou restaurante, "água mineral" em rubrica de compra).</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    Gerado em 20/08/2026 a partir de dados públicos do
+    <a href="https://facto.conveniar.com.br/portaltransparencia/" rel="noopener">Portal da Transparência FACTO</a>.
+    O CSV exportado traz uma linha por par categoria × projeto.
+  </footer>
+</div>
+
+<script id="groups" type="application/json">[{"title":"1. Áreas atingidas / reparação de desastres","summary":"4 projetos diretos somando R$ 41,4 milhões, mais 2 relacionados indiretos.","note":"\"Remanejo\" literal só aparece nos dados como remanejamento de verba entre rubricas orçamentárias — nenhum projeto trata de reassentamento físico de populações atingidas.","items":[{"id":"195","titulo":"Formação de Educadores em Educação Ambiental nas Escolas Capixabas do Rio Doce  Programa RioDoceEscolar - IFES","rel":"Direto","coord":"Manuella Villar Amado","fin":"Fundação Renova","valor":15574842.16,"vig":"22/07/2028","why":"Reparação do desastre da Samarco na bacia do Rio Doce (Fundação Renova)"},{"id":"372","titulo":"Estudos de Impacto de Danos (EIDs) e a processos de Consulta Livre, Prévia e Informada (CLPI), aplicáveis a políticas públicas de reparação socioambiental com foco nos povos Tupiniquim e Guarani (ES) e Puri (MG)","rel":"Direto","coord":"Geraldo Andrade de Oliveira","fin":"Ministério dos Povos Indígenas (MPI)","valor":14580700.0,"vig":"07/12/2026","why":"Políticas públicas de reparação socioambiental — povos Tupiniquim e Guarani (ES) e Puri (MG)"},{"id":"300","titulo":"Avaliação dos Efeitos do Desastre Natural Decorrente das Mudanças Climáticas na Fauna Silvestre no Estado do Rio Grande do Sul","rel":"Direto","coord":"CECILIA CRONEMBERGER DE FARIA","fin":"INSTITUTO CHICO MENDES DE CONSERVAÇÃO DA BIODIVERSIDADE - ICMBio","valor":10879000.0,"vig":"11/10/2027","why":"Desastre das enchentes no Rio Grande do Sul"},{"id":"368","titulo":"Laboratório do Mundo Real (Real-World Lab)","rel":"Direto","coord":"Leopoldo Cavaleri Gerhardinger","fin":"The University of Rhode Island","valor":330000.0,"vig":"24/02/2028","why":"Comunidades tradicionais afetadas pelo crime da Samarco no baixo Rio Doce e biomas da Mata Atlântica"},{"id":"338","titulo":"Profissionais do Amanhã: Capacitação Técnica em Química e Gastronomia","rel":"Indireto","coord":"EDUARDA DE BIASE FERRARI GOMES","fin":"Samarco Mineração S.A - Em recuperação Judicial","valor":1792615.0,"vig":"23/01/2028","why":"Capacitação financiada pela Samarco na região; inclui disciplina de tratamento de águas e resíduos"},{"id":"385","titulo":"CONECTA.ES","rel":"Indireto","coord":"HOMERO ALBERTO GOMES DA SILVA","fin":"Instituto Brasileiro de Cidades Humanas, Inteligentes, Criativas e Sustentáveis (IBRACHICS)","valor":1000000.0,"vig":"30/07/2027","why":"Cria o Living Lab Rio Doce — centro de prototipagem e experimentação de tecnologias"}]},{"title":"2. Reflorestamento / restauração florestal","summary":"Nenhum projeto direto — nenhum dos 115 tem reflorestamento ou restauração florestal como objeto; os listados são os mais próximos do tema.","note":"","items":[{"id":"229","titulo":"Implantação e avaliação econômica e ambiental de sistemas agropecuários florestais, denominado Projeto IFES-SAF Montanha","rel":"Adjacente","coord":"GABRIELE SAUDE VIANA","fin":"BANCO DE DESENVOLVIMENTO DO ESPÍRITO SANTO S.A.","valor":46819.41,"vig":"07/03/2028","why":"Sistemas agroflorestais (SAF)"},{"id":"362","titulo":"FRESTA - Centro de Gestão Integrada de Saberes e Territórios","rel":"Adjacente","coord":"PATRICIA GUIMARAES PINTO","fin":"MINISTÉRIO DA EDUCAÇÃO","valor":300000.0,"vig":"30/12/2027","why":"Bioeconomia e saberes tradicionais da Mata Atlântica"},{"id":"368","titulo":"Laboratório do Mundo Real (Real-World Lab)","rel":"Adjacente","coord":"Leopoldo Cavaleri Gerhardinger","fin":"The University of Rhode Island","valor":330000.0,"vig":"24/02/2028","why":"Biomas associados da Mata Atlântica"}]},{"title":"3. Água / recursos hídricos","summary":"Nenhum projeto direto — toda ocorrência de \"água\" nos dados é item de compra (purificadores, mangueiras, água mineral) ou processo industrial; os listados são adjacentes ao tema.","note":"","items":[{"id":"195","titulo":"Formação de Educadores em Educação Ambiental nas Escolas Capixabas do Rio Doce  Programa RioDoceEscolar - IFES","rel":"Adjacente","coord":"Manuella Villar Amado","fin":"Fundação Renova","valor":15574842.16,"vig":"22/07/2028","why":"Educação ambiental na bacia do Rio Doce"},{"id":"337","titulo":"Fundo rescisório - Projeto de Educação Ambiental Redes de Cidadania Eixo Litoral Sul - ES (337)","rel":"Adjacente","coord":"Setor de Projetos","fin":"(não declarada)","valor":49922965.9,"vig":"05/07/2028","why":"Educação ambiental no litoral sul do ES — maior valor aprovado do portal"},{"id":"369","titulo":"Apoio à Manutenção do LMTA-IFAL: Laboratório Multiusuário de Tecnologias Ambientais","rel":"Adjacente","coord":"Johnnatan Duarte de Freitas","fin":"Financiadora de Estudos e Projetos - Finep","valor":1815722.71,"vig":"05/03/2029","why":"Laboratório de análises e tecnologias ambientais"},{"id":"338","titulo":"Profissionais do Amanhã: Capacitação Técnica em Química e Gastronomia","rel":"Adjacente","coord":"EDUARDA DE BIASE FERRARI GOMES","fin":"Samarco Mineração S.A - Em recuperação Judicial","valor":1792615.0,"vig":"23/01/2028","why":"Disciplina de tratamento de águas e resíduos"}]},{"title":"4. Restauração Produtiva","summary":"1 projeto direto (R$ 46,8 mil) e 2 adjacentes. \"Restauração\" nos demais projetos aparece como justiça restaurativa ou restaurante (falsos positivos descartados).","note":"","items":[{"id":"229","titulo":"Implantação e avaliação econômica e ambiental de sistemas agropecuários florestais, denominado Projeto IFES-SAF Montanha","rel":"Direto","coord":"GABRIELE SAUDE VIANA","fin":"BANCO DE DESENVOLVIMENTO DO ESPÍRITO SANTO S.A.","valor":46819.41,"vig":"07/03/2028","why":"Implantação de sistemas agroflorestais (SAF) com avaliação econômica e ambiental"},{"id":"300","titulo":"Avaliação dos Efeitos do Desastre Natural Decorrente das Mudanças Climáticas na Fauna Silvestre no Estado do Rio Grande do Sul","rel":"Adjacente","coord":"CECILIA CRONEMBERGER DE FARIA","fin":"INSTITUTO CHICO MENDES DE CONSERVAÇÃO DA BIODIVERSIDADE - ICMBio","valor":10879000.0,"vig":"11/10/2027","why":"Plano de trabalho inclui oficina e produção de plano de restauração pós-desastre no RS"},{"id":"390","titulo":"Pacto Ecológico Capixaba","rel":"Adjacente","coord":"Gladyson Brommonschenkel Demonier","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":234345.37,"vig":"06/08/2027","why":"Transição do sistema alimentar para base agroecológica (PNAPO)"}]},{"title":"5. Agroecologia e ATER","summary":"9 projetos diretos somando R$ 62,6 milhões — maior bloco temático do portal, ancorado no MDA/INCRA (guarda-chuva EMBRAPRO) — mais 2 adjacentes.","note":"Projetos cujo único vínculo era o nome do financiador (ex.: \"Modernização Administrativa\" financiada pelo INCRA) ou \"assistência técnica\" fora do contexto rural (ASSISTEC empreendedorismo, assistência técnica de patrimônio no Convento da Penha) foram descartados.","items":[{"id":"390","titulo":"Pacto Ecológico Capixaba","rel":"Direto","coord":"Gladyson Brommonschenkel Demonier","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":234345.37,"vig":"06/08/2027","why":"Implementação da Política Nacional de Agroecologia e Produção Orgânica (PNAPO)"},{"id":"323","titulo":"Operacionalização da produção de bioinsumos on farm para cooperativas e associações de agricultores e agricultoras familiares","rel":"Direto","coord":"Marcela Pavan Bagagli","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":2902876.02,"vig":"07/06/2027","why":"Produção de bioinsumos on farm para cooperativas da agricultura familiar"},{"id":"205","titulo":"Fortalecimento Agricultura Capixaba - IFES","rel":"Direto","coord":"Sávio da Silva Berilli","fin":"Instituto Federal De Educação Ciencia E Tecnologia Do Espirito Santo - Reitoria","valor":4063368.3,"vig":"31/12/2026","why":"Fortalecimento institucional da agricultura capixaba"},{"id":"259","titulo":"Execução da gestão fundiária e ambiental PNRA Nacional (EMBRAPRO)","rel":"Direto","coord":"Alexandre Pereira Chahad","fin":"Instituto Nacional de Colonização e Reforma Agrária (INCRA)","valor":47054000.0,"vig":"05/02/2027","why":"Gestão fundiária e ambiental do Programa Nacional de Reforma Agrária (PNRA)"},{"id":"328","titulo":"Pesquisa aplicada, desenvolvimento tecnológico e realização de serviços de apoio à pesquisa visando a execução da gestão fundiária e ambiental para o desenvolvimento de projetos de assentamento participantes do PNRA (EMBRAPRO)","rel":"Direto","coord":"Alexandre Pereira Chahad","fin":"Instituto Nacional de Colonização e Reforma Agrária (INCRA)","valor":1300000.0,"vig":"04/04/2027","why":"Regularização de ocupantes, titulação de beneficiários e georreferenciamento (INCRA)"},{"id":"350","titulo":"INCRA - Desenvolvimento Rural Sustentável e Valorização dos Saberes do Campo (EMBRAPRO)","rel":"Direto","coord":"Leylah Marques","fin":"Instituto Nacional de Colonização e Reforma Agrária (INCRA)","valor":1400000.0,"vig":"01/12/2027","why":"Desenvolvimento rural sustentável e valorização dos saberes do campo"},{"id":"383","titulo":"Apoio às unidades regionais para operacionalização do Programa Nacional de Crédito Fundiário (PNCF)","rel":"Direto","coord":"Luiz Roberto Pereira Nemoto","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":1327500.0,"vig":"02/09/2027","why":"Operacionalização regional do Programa Nacional de Reforma Agrária"},{"id":"384","titulo":"PLANO NACIONAL DE ABASTECIMENTO ALIMENTAR - PLANAB 2 (EMBRAPRO)","rel":"Direto","coord":"Luciana Aparecida Santos Barros","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":2223270.38,"vig":"03/07/2027","why":"Plano Nacional de Abastecimento Alimentar (PLANAB 2) — agricultura familiar"},{"id":"332","titulo":"Apoiar a implementação do Plano Nacional de Abastecimento Alimentar (PLANAB), como foco no desenvolvimento, estruturação, execução e sistematização das iniciativas de comercialização da agricultura familia na Região Sudeste","rel":"Direto","coord":"Leylah Marques","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":2125838.7,"vig":"09/06/2027","why":"Implementação do PLANAB na Região Sudeste — comercialização da agricultura familiar"},{"id":"366","titulo":"Solo Vivo Paulista (EMBRAPRO)","rel":"Adjacente","coord":"Luciano Delmondes de Alencar","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":6000000.0,"vig":"06/04/2027","why":"Programa Solo Vivo — manejo e saúde de solos agrícolas"},{"id":"377","titulo":"Esporte e Cultura no Campo - EMBRAPRO","rel":"Adjacente","coord":"Marcelo Velloso Heeren","fin":"Ministério do Desenvolvimento Agrário e Agricultura Familiar","valor":1500000.0,"vig":"16/04/2027","why":"Esporte e cultura em comunidades do campo"}]},{"title":"6. Aderência Direta ao Território (Rio Doce e Reparação)","summary":"3 projetos diretos somando R$ 30,5 milhões, mais 2 indiretos — mesmo núcleo da seção 1, recortado ao território do Rio Doce e ao sistema de reparação Samarco/Renova.","note":"","items":[{"id":"195","titulo":"Formação de Educadores em Educação Ambiental nas Escolas Capixabas do Rio Doce  Programa RioDoceEscolar - IFES","rel":"Direto","coord":"Manuella Villar Amado","fin":"Fundação Renova","valor":15574842.16,"vig":"22/07/2028","why":"Programa RioDoceEscolar — educação ambiental nas escolas da bacia do Rio Doce (Fundação Renova)"},{"id":"372","titulo":"Estudos de Impacto de Danos (EIDs) e a processos de Consulta Livre, Prévia e Informada (CLPI), aplicáveis a políticas públicas de reparação socioambiental com foco nos povos Tupiniquim e Guarani (ES) e Puri (MG)","rel":"Direto","coord":"Geraldo Andrade de Oliveira","fin":"Ministério dos Povos Indígenas (MPI)","valor":14580700.0,"vig":"07/12/2026","why":"Reparação socioambiental — povos Tupiniquim e Guarani (ES) e Puri (MG)"},{"id":"368","titulo":"Laboratório do Mundo Real (Real-World Lab)","rel":"Direto","coord":"Leopoldo Cavaleri Gerhardinger","fin":"The University of Rhode Island","valor":330000.0,"vig":"24/02/2028","why":"Comunidades afetadas pelo crime da Samarco no baixo Rio Doce"},{"id":"338","titulo":"Profissionais do Amanhã: Capacitação Técnica em Química e Gastronomia","rel":"Indireto","coord":"EDUARDA DE BIASE FERRARI GOMES","fin":"Samarco Mineração S.A - Em recuperação Judicial","valor":1792615.0,"vig":"23/01/2028","why":"Capacitação técnica financiada pela Samarco na região"},{"id":"385","titulo":"CONECTA.ES","rel":"Indireto","coord":"HOMERO ALBERTO GOMES DA SILVA","fin":"Instituto Brasileiro de Cidades Humanas, Inteligentes, Criativas e Sustentáveis (IBRACHICS)","valor":1000000.0,"vig":"30/07/2027","why":"Living Lab Rio Doce — prototipagem e experimentação de tecnologias"}]},{"title":"7. Gestão Ambiental e Biodiversidade (Peso Institucional)","summary":"3 projetos diretos somando R$ 15,9 milhões — dois deles com o ICMBio como financiador — mais 1 adjacente.","note":"","items":[{"id":"258","titulo":"Sistemas de Gestão de Dados sobre Biodiversidade do Instituto Chico Mendes - ICMBio","rel":"Direto","coord":"Ivan Salzo","fin":"Instituto Chico Mendes de Conservação da Biodiversidade - ICMBio","valor":4763879.64,"vig":"25/01/2029","why":"Sistemas de gestão de dados sobre biodiversidade do ICMBio"},{"id":"300","titulo":"Avaliação dos Efeitos do Desastre Natural Decorrente das Mudanças Climáticas na Fauna Silvestre no Estado do Rio Grande do Sul","rel":"Direto","coord":"CECILIA CRONEMBERGER DE FARIA","fin":"INSTITUTO CHICO MENDES DE CONSERVAÇÃO DA BIODIVERSIDADE - ICMBio","valor":10879000.0,"vig":"11/10/2027","why":"Avaliação dos efeitos de desastre climático na fauna silvestre (ICMBio)"},{"id":"362","titulo":"FRESTA - Centro de Gestão Integrada de Saberes e Territórios","rel":"Direto","coord":"PATRICIA GUIMARAES PINTO","fin":"MINISTÉRIO DA EDUCAÇÃO","valor":300000.0,"vig":"30/12/2027","why":"Gestão integrada de saberes e territórios — biodiversidade da Mata Atlântica"},{"id":"369","titulo":"Apoio à Manutenção do LMTA-IFAL: Laboratório Multiusuário de Tecnologias Ambientais","rel":"Adjacente","coord":"Johnnatan Duarte de Freitas","fin":"Financiadora de Estudos e Projetos - Finep","valor":1815722.71,"vig":"05/03/2029","why":"Laboratório multiusuário de tecnologias ambientais"}]},{"title":"8. Cota de Ecossistemas Costeiros (Região 4)","summary":"5 projetos diretos somando R$ 22,8 milhões — pesca oceânica, cadeias produtivas pesqueiras e ambiente marinho-costeiro — mais 1 adjacente.","note":"","items":[{"id":"256","titulo":"Reconhecimento e fortalecimento da cadeia produtiva da pesca oceânica do Espírito Santo","rel":"Direto","coord":"Jones Santander Neto","fin":"Ministério da pesca e aquicultura","valor":2997016.84,"vig":"25/02/2028","why":"Cadeia produtiva da pesca oceânica do Espírito Santo"},{"id":"257","titulo":"REQUISITOS HIGIÊNICOS  SANITÁRIOS PARA EMBARCAÇÕES PESQUIERIAS DE  PRODUÇÃO PRIMÁRIA","rel":"Direto","coord":"Gabriel Domingos Carvalho","fin":"Instituto Federal De Educação Ciencia E Tecnologia Do Espirito Santo - Reitoria","valor":2475017.79,"vig":"19/02/2028","why":"Requisitos higiênico-sanitários para embarcações pesqueiras"},{"id":"325","titulo":"Pesquisa aplicada para desenvolver uma cadeia produtiva sustentável que aproveite  integralmente as cascas de ostras e mariscos, implementando uma indústria piloto de beneficiamento (EMBRAPRO)","rel":"Direto","coord":"Alexandre Pereira Chahad","fin":"Ministério da pesca e aquicultura","valor":10000000.0,"vig":"21/03/2027","why":"Cadeia produtiva sustentável da pesca (Ministério da Pesca e Aquicultura)"},{"id":"326","titulo":"Pesquisa aplicada para desenvolver tecnologias e processos sustentáveis para o  aproveitamento integral de peixes produzidos em tanques-rede, evoluindo para a criação de produtos e coprodutos de valor  agregado (EMBRAPRO)","rel":"Direto","coord":"Alexandre Pereira Chahad","fin":"Ministério da pesca e aquicultura","valor":7000000.0,"vig":"27/03/2027","why":"Tecnologias e processos sustentáveis para aproveitamento pesqueiro"},{"id":"368","titulo":"Laboratório do Mundo Real (Real-World Lab)","rel":"Direto","coord":"Leopoldo Cavaleri Gerhardinger","fin":"The University of Rhode Island","valor":330000.0,"vig":"24/02/2028","why":"Ambiente marinho-costeiro do baixo Rio Doce e Mata Atlântica"},{"id":"337","titulo":"Fundo rescisório - Projeto de Educação Ambiental Redes de Cidadania Eixo Litoral Sul - ES (337)","rel":"Adjacente","coord":"Setor de Projetos","fin":"(não declarada)","valor":49922965.9,"vig":"05/07/2028","why":"Educação ambiental no território costeiro do Eixo Litoral Sul — ES"}]}]</script>
+<script>
+"use strict";
+const GROUPS = JSON.parse(document.getElementById("groups").textContent);
+const SITE = "https://ifesserra-lab.github.io/factor/#/projeto/";
+const fmtBRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+const root = document.getElementById("sections");
+GROUPS.forEach(g => {
+  const sec = document.createElement("section");
+  const h2 = document.createElement("h2"); h2.textContent = g.title;
+  const sum = document.createElement("p"); sum.className = "sec-sum"; sum.textContent = g.summary;
+  sec.append(h2, sum);
+
+  const scroll = document.createElement("div"); scroll.className = "tbl-scroll";
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  ["Projeto", "Relação", "Coordenação", "Financiadora", "Valor aprovado", "Vigência", "Ligação com o tema"].forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    if (h === "Valor aprovado") th.className = "valor";
+    trh.append(th);
+  });
+  thead.append(trh); table.append(thead);
+  const tbody = document.createElement("tbody");
+  g.items.forEach(it => {
+    const tr = document.createElement("tr");
+
+    const tdP = document.createElement("td"); tdP.className = "proj";
+    const a = document.createElement("a");
+    a.href = SITE + encodeURIComponent(it.id);
+    a.rel = "noopener"; a.target = "_blank";
+    const pid = document.createElement("span"); pid.className = "pid"; pid.textContent = it.id;
+    a.append(pid, document.createTextNode(it.titulo));
+    tdP.append(a);
+
+    const tdR = document.createElement("td");
+    const chip = document.createElement("span");
+    chip.className = "chip" + (it.rel === "Direto" ? " direto" : "");
+    chip.textContent = it.rel;
+    tdR.append(chip);
+
+    const tdC = document.createElement("td"); tdC.textContent = it.coord;
+    const tdF = document.createElement("td"); tdF.textContent = it.fin;
+    const tdV = document.createElement("td"); tdV.className = "valor";
+    tdV.textContent = it.valor ? fmtBRL.format(it.valor) : "—";
+    const tdVig = document.createElement("td");
+    tdVig.textContent = it.vig ? "até " + it.vig : "—";
+    tdVig.style.whiteSpace = "nowrap";
+    const tdW = document.createElement("td"); tdW.className = "why"; tdW.textContent = it.why;
+
+    tr.append(tdP, tdR, tdC, tdF, tdV, tdVig, tdW);
+    tbody.append(tr);
+  });
+  table.append(tbody);
+  scroll.append(table);
+  sec.append(scroll);
+  if (g.note) {
+    const note = document.createElement("p"); note.className = "note"; note.textContent = g.note;
+    sec.append(note);
+  }
+  root.append(sec);
+});
+
+/* ---------- CSV export ---------- */
+function csvEscape(v) {
+  v = String(v == null ? "" : v);
+  return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+function toCsv(header, rows) {
+  return "﻿" + [header].concat(rows).map(r => r.map(csvEscape).join(";")).join("\r\n");
+}
+async function exportCsv() {
+  const header = ["categoria", "relacao", "projeto_id", "titulo", "coordenacao", "financiadora",
+    "valor_aprovado", "vigencia", "ligacao_com_o_tema", "link"];
+  const rows = [];
+  GROUPS.forEach(g => g.items.forEach(it => {
+    rows.push([g.title.replace(/^\d+\.\s*/, ""), it.rel, it.id, it.titulo, it.coord, it.fin,
+      it.valor ? it.valor.toFixed(2).replace(".", ",") : "", it.vig, it.why, SITE + it.id]);
+  }));
+  const text = toCsv(header, rows);
+  const name = "projetos_tematicos_facto.csv";
+
+  const dls = window.claude ? await claude.use("downloads") : null;
+  if (dls) {
+    try {
+      await dls.save({ filename: name, data: text });
+    } catch (e) {
+      if (e && e.code === "extension_not_enabled") {
+        try { await dls.save({ filename: name + ".txt", data: text }); } catch (_) { /* declined */ }
+      }
+    }
+    return;
+  }
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+document.getElementById("btnExport").addEventListener("click", exportCsv);
+</script>
