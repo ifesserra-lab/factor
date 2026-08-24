@@ -1,0 +1,69 @@
+name: Atualiza dados do portal
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # toda segunda-feira, 06:00 UTC (03:00 BRT)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-update
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+
+      - name: Checkout factor_lib
+        uses: actions/checkout@v4
+        with:
+          repository: ifesserra-lab/factor_lib
+          path: factor_lib
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install factor_lib + Chromium
+        working-directory: factor_lib
+        run: |
+          pip install -e .
+          python -m playwright install --with-deps chromium
+
+      - name: Scrape do portal (115+ projetos, ~20 min)
+        working-directory: factor_lib
+        run: |
+          python - <<'EOF'
+          from factor_lib import scrape_and_save
+
+          result = scrape_and_save("output/projetos.json")
+          print(f"total={result.total} ok={result.success_count} erros={result.error_count}")
+          # trava de qualidade: não publica um scrape majoritariamente falho
+          assert result.success_count >= 100, (
+              f"apenas {result.success_count} projetos ok — abortando publicação"
+          )
+          EOF
+
+      - name: Build do site
+        working-directory: factor_lib
+        run: python scripts/build_site.py
+
+      - name: Publica se houver mudança
+        run: |
+          cp factor_lib/site/index.html index.html
+          if git diff --quiet -- index.html; then
+            echo "Sem mudanças no site — nada a publicar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Atualiza dashboard com dados de $(date -u +%d/%m/%Y)"
+          git push
